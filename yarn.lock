@@ -259,6 +259,7 @@ __metadata:
   dependencies:
     express: "npm:^5.1.0"
     nodemon: "npm:^3.1.10"
+    yt-dlp-wrap: "npm:2.3.12"
   languageName: unknown
   linkType: soft
 
@@ -1666,5 +1667,12 @@ __metadata:
   version: 5.0.0
   resolution: "yallist@npm:5.0.0"
   checksum: a499c81ce6d4a1d260d4ea0f6d49ab4da09681e32c3f0472dee16667ed69d01dae63a3b81745a24bd78476ec4fcf856114cb4896ace738e01da34b2c42235416
+  languageName: node
+  linkType: hard
+
+"yt-dlp-wrap@npm:2.3.12":
+  version: 2.3.12
+  resolution: "yt-dlp-wrap@npm:2.3.12"
+  checksum: 6164a538203fa58690bdf73268dab416f439812ab0840dab813e8b6b00a238fb588d55a8bf14aba33da8d21767397db25e7100f7fadfb318208f891b9ce9f8ef
   languageName: node
   linkType: hard

@@ -1,6 +1,8 @@
 const express = require('express');
+const {setupAppRouter} = require("./routes");
+const router = express.Router()
 
-const start = ({port, routes}) => {
+const start = async ({port}) => {
     const app = express();
     app.use(express.json());
 
@@ -20,9 +22,14 @@ const start = ({port, routes}) => {
         next();
     });
 
-    if (routes && typeof routes === 'function') {
-        routes(app);
+    const ytDlpLib = require('./modifiers/video-modifier').init()
+    await ytDlpLib.downloadVersion()
+
+    const context = {
+        modifiers: ytDlpLib
     }
+
+   await setupAppRouter({context, router})
 
     // Fallback 404
     app.use((req, res) => {
