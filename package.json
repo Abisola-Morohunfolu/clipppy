@@ -9,6 +9,8 @@
   },
   "private": true,
   "dependencies": {
+    "body-parser": "^2.2.0",
+    "certifi": "^14.5.15",
     "express": "^5.1.0",
     "nodemon": "^3.1.10",
     "yt-dlp-wrap": "2.3.12"

@@ -227,6 +227,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"certifi@npm:^14.5.15":
+  version: 14.5.15
+  resolution: "certifi@npm:14.5.15"
+  checksum: a5666b56145fbdfa21240376ad1521d326e08efcf8cd44644ba338419f1590120f16efb6745f2d1e92c1e21d92b53e1353d4d1792a071f5ba896c6b585276832
+  languageName: node
+  linkType: hard
+
 "chokidar@npm:^3.5.2":
   version: 3.6.0
   resolution: "chokidar@npm:3.6.0"
@@ -257,6 +264,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "clippy@workspace:."
   dependencies:
+    body-parser: "npm:^2.2.0"
+    certifi: "npm:^14.5.15"
     express: "npm:^5.1.0"
     nodemon: "npm:^3.1.10"
     yt-dlp-wrap: "npm:2.3.12"
