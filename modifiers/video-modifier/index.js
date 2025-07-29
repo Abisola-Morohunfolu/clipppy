@@ -46,9 +46,13 @@ const makeCreateDownloadDir = () => async () => {
 
 const makeClipVideo = (ffmpegLib) => async (inputPath, outputPath, startTime, durationSec) => {
 	return new Promise((resolve, reject) => {
-		ffmpegLib(inputPath)
-			.setStartTime(startTime)
-			.setDuration(durationSec)
+		const videoPath = ffmpegLib(inputPath)
+
+		if (durationSec) {
+			videoPath.setDuration(durationSec)
+		}
+
+		videoPath.setStartTime(startTime)
 			.output(outputPath)
 			.on('start', cmd => console.log('[FFMPEG] Command:', cmd))
 			.on('progress', progress =>
@@ -78,7 +82,7 @@ const createRandomKey = (keyLength) => {
 	return stringWithCharset(keyLength, randStringCharset)
 }
 
-const makeDownloadAndClipVideo = (clip) => async ({ url, start, end }) => {
+const makeDownloadAndClipVideo = (clipVideo) => async ({ url, start, end }) => {
 	const ytDlpWrap = new YTDlpWrap(YT_DOWNLOAD_PATH)
 
 	let videoUrl = url.replace('https://', 'http://')
@@ -95,11 +99,18 @@ const makeDownloadAndClipVideo = (clip) => async ({ url, start, end }) => {
 		process.exit(1)
 	})
 
-	const fileName = `${createRandomKey(10)}.mp4`
+	const filenameKey = createRandomKey(10)
+
+	let fileName = `${filenameKey}.mp4`
 	const fileNameWithPath = `${DOWNLOAD_DIR}/${fileName}`
 
 	try {
 		await ytDlpWrap.execPromise(['--no-check-certificate', videoUrl, '-o', fileNameWithPath])
+
+		if (start || end) {
+			fileName = `clipped_${filenameKey}.mp4`
+			await clipVideo(fileNameWithPath, `${DOWNLOAD_DIR}/${fileName}`, start || 0, end)
+		}
 	} catch (startErr) {
 		console.error('[ERROR] Failed to start yt-dlp process:', startErr.message)
 
