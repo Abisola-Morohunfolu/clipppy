@@ -1,21 +1,21 @@
 const getVideo = (context) => async (req, res) => {
-    const { video_url } = req.body || {}
+	const { video_url: videoUrl } = req.body || {}
 
-    if (!video_url) {
-       return res.status(400).json({ message: 'Video url is required' });
-    }
+	if (!videoUrl) {
+		return res.status(400).json({ message: 'Video url is required' })
+	}
 
-    const {isSuccess, file_name} = await context.modifiers.videoModifier.fetchVideo({url: video_url})
+	const { isSuccess, fileName } = await context.modifiers.videoModifier.downloadAndClipVideo({ url: videoUrl })
 
-    if (!isSuccess) {
-       return res.status(400).json({
-            message: 'Error downloading video',
-        })
-    }
+	if (!isSuccess) {
+		return res.status(400).json({
+			message: 'Error downloading video'
+		})
+	}
 
-    return res.status(200).json({
-        file_name,
-    })
+	return res.status(200).json({
+		file_name: fileName
+	})
 }
 
-Object.assign(module.exports, {getVideo})
+Object.assign(module.exports, { getVideo })
