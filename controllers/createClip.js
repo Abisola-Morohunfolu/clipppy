@@ -1,4 +1,4 @@
-const getVideo = (context) => async (req, res) => {
+const createClip = (context) => async (req, res) => {
 	const { video_url: videoUrl, start, end } = req.body || {}
 
 	if (!videoUrl) {
@@ -18,4 +18,4 @@ const getVideo = (context) => async (req, res) => {
 	})
 }
 
-Object.assign(module.exports, { getVideo })
+Object.assign(module.exports, { createClip })

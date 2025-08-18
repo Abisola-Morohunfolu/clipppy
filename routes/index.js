@@ -1,8 +1,9 @@
-const { getVideo } = require('../controllers')
+const { createClip, downloadClip } = require('../controllers')
 const bodyParser = require('body-parser')
 
 const setupAppRouter = async ({ context, router }) => {
-	router.post('/download', bodyParser.json(), getVideo(context))
+	router.post('/clips/create', bodyParser.json(), createClip(context))
+	router.get('/clips/:fileName', bodyParser.json(), downloadClip(context))
 
 	return router
 }

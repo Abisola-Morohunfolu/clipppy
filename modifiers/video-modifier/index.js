@@ -15,11 +15,13 @@ const init = () => {
 	const createDownloadDir = makeCreateDownloadDir()
 	const clipVideo = makeClipVideo(ffmpeg)
 	const downloadAndClipVideo = makeDownloadAndClipVideo(clipVideo)
+	const getVideoFile = makeGetVideoFile()
 
 	return {
 		downloadVersion,
 		createDownloadDir,
-		downloadAndClipVideo
+		downloadAndClipVideo,
+		getVideoFile
 	}
 }
 
@@ -120,6 +122,32 @@ const makeDownloadAndClipVideo = (clipVideo) => async ({ url, start, end }) => {
 	return {
 		isSuccess: true,
 		fileName
+	}
+}
+
+const makeGetVideoFile = () => async ({ fileName }) => {
+	try {
+		const filePath = path.join(DOWNLOAD_DIR, fileName)
+
+		if (!fs.existsSync(filePath)) {
+			return { isSuccess: false, message: 'File not found' }
+		}
+
+		const stats = fs.statSync(filePath)
+
+		return {
+			isSuccess: true,
+			data: {
+				filePath,
+				fileName,
+				fileSize: stats.size,
+				created: stats.birthtime
+			}
+		}
+	} catch (error) {
+		console.error('[ERROR] Failed to get video file:', error.message)
+
+		return { isSuccess: false, message: error.message }
 	}
 }
 
