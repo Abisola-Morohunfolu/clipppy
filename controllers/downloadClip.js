@@ -1,6 +1,6 @@
-const fs = require('fs')
+import fs from 'node:fs';
 
-const downloadClip = (context) => async (req, res) => {
+export const downloadClip = (context) => async (req, res) => {
 	try {
 		const { fileName } = req.params
 
@@ -51,8 +51,4 @@ const downloadClip = (context) => async (req, res) => {
 			})
 		}
 	}
-}
-
-module.exports = {
-	downloadClip
 }

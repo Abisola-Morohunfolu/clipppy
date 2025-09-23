@@ -1,4 +1,5 @@
-const { start } = require('./server')
+import { start } from "./server.js";
+
 
 const main = async () => {
 	try {
@@ -8,4 +9,4 @@ const main = async () => {
 	}
 }
 
-main()
+void main()

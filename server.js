@@ -1,45 +1,14 @@
-const express = require('express')
-const { setupAppRouter } = require('./routes')
+import express from 'express';
 const router = express.Router()
-const https = require('http')
-const fs = require('fs')
-const certifi = require('certifi')
+import https from 'node:http';
+import { init } from './modifiers/video-modifier/index.js'
+import {setupAppRouter} from "./routes/index.js";
 
-const start = async ({ port }) => {
+export const start = async ({ port }) => {
 	const app = express()
 
-	// app.use(bodyParser.json());
-	// app.use((req, res, next) => {
-	//     let raw = '';
-	//     req.on('data', chunk => raw += chunk);
-	//     req.on('end', () => {
-	//         console.log('> Incoming:', req.method, req.url);
-	//         console.log('> Content-Type:', req.headers['content-type']);
-	//         console.log('> Raw body:', JSON.stringify(raw));
-	//         next();
-	//     });
-	// });
-	// app.use(express.json());
-	//
-	// app.use(express.urlencoded({ extended: true }));
+	const videoModifier = init()
 
-	// app.use((req, res, next) => {
-	//     res.header('Access-Control-Allow-Origin', '*');
-	//     res.header(
-	//         'Access-Control-Allow-Methods',
-	//         'GET, POST, OPTIONS'
-	//     );
-	//     res.header(
-	//         'Access-Control-Allow-Headers',
-	//         'Content-Type'
-	//     );
-	//     if (req.method === 'OPTIONS') return res.sendStatus(204);
-	//     next();
-	// });
-
-	const videoModifier = require('./modifiers/video-modifier').init()
-
-	// await videoModifier.downloadVersion()
 	await videoModifier.createDownloadDir()
 
 	const context = {
@@ -47,10 +16,6 @@ const start = async ({ port }) => {
 			videoModifier
 		}
 	}
-	//
-	// router.get('/health', (req, res) => {
-	//     res.json({ status: 'ok' });
-	// });
 
 	await setupAppRouter({ context, router })
 
@@ -61,9 +26,7 @@ const start = async ({ port }) => {
 
 	app.use('/', router)
 
-	const httpsServer = https.createServer({
-		cert: fs.readFileSync(certifi)
-	}, app)
+	const httpsServer = https.createServer(app);
 
 	try {
 		httpsServer.listen(port, () => {
@@ -73,7 +36,3 @@ const start = async ({ port }) => {
 		console.error('Failed to start server:', err)
 	}
 }
-
-Object.assign(module.exports, {
-	start
-})

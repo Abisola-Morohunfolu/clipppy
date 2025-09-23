@@ -1,4 +1,4 @@
-const createClip = (context) => async (req, res) => {
+export const createClip = (context) => async (req, res) => {
 	const { video_url: videoUrl, start, end } = req.body || {}
 
 	if (!videoUrl) {
@@ -17,5 +17,3 @@ const createClip = (context) => async (req, res) => {
 		file_name: fileName
 	})
 }
-
-Object.assign(module.exports, { createClip })

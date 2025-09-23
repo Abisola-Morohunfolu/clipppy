@@ -1,13 +1,21 @@
-const { FlatCompat } = require('@eslint/eslintrc')
-const jsConfig = require('./.eslintrc.js')
-const js = require('@eslint/js')
+// eslint.config.js (ESM / Flat config)
+import { FlatCompat } from '@eslint/eslintrc';
+import js from '@eslint/js';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+// If you're importing a legacy .eslintrc.js (CommonJS), default import works in ESM.
+import jsConfig from './.eslintrc.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const compat = new FlatCompat({
 	baseDirectory: __dirname,
 	resolvePluginsRelativeTo: __dirname,
 	recommendedConfig: js.configs.recommended,
-	allConfig: js.configs.all
-})
+	allConfig: js.configs.all,
+});
 
 const config = [
 	{
@@ -23,13 +31,13 @@ const config = [
 			'**/isos-alerts-job.js',
 			'lib/dist',
 			'dist/**',
-			'**/*.d.ts'
-		]
+			'**/*.d.ts',
+		],
 	},
-	...compat.config(jsConfig).map(config => ({
-		...config,
-		files: ['**/*.js']
-	}))
-]
+	...compat.config(jsConfig).map((cfg) => ({
+		...cfg,
+		files: ['**/*.js'],
+	})),
+];
 
-module.exports = config
+export default config;

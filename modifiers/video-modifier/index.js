@@ -1,14 +1,17 @@
-const YTDlpWrap = require('yt-dlp-wrap').default
-const path = require('path')
-const fs = require('fs')
+import YTDlpWrap from 'yt-dlp-wrap';
+import path from 'node:path';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import ffmpeg from 'fluent-ffmpeg';
+import ffmpegPath from 'ffmpeg-static';
 
-const YT_DOWNLOAD_PATH = path.join(__dirname, 'bin', 'yt-dlp')
-const DOWNLOAD_DIR = path.resolve(__dirname, 'downloads')
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const init = () => {
-	const ffmpeg = require('fluent-ffmpeg')
-	const ffmpegPath = require('ffmpeg-static')
+const YT_DOWNLOAD_PATH = path.join(__dirname, 'bin', 'yt-dlp');
+const DOWNLOAD_DIR = path.resolve(__dirname, 'downloads');
 
+export const init = () => {
 	ffmpeg.setFfmpegPath(ffmpegPath)
 
 	const downloadVersion = makeDownloadVersion()
@@ -85,7 +88,7 @@ const createRandomKey = (keyLength) => {
 }
 
 const makeDownloadAndClipVideo = (clipVideo) => async ({ url, start, end }) => {
-	const ytDlpWrap = new YTDlpWrap(YT_DOWNLOAD_PATH)
+	const ytDlpWrap = new YTDlpWrap.default(YT_DOWNLOAD_PATH)
 
 	let videoUrl = url.replace('https://', 'http://')
 
@@ -150,7 +153,3 @@ const makeGetVideoFile = () => async ({ fileName }) => {
 		return { isSuccess: false, message: error.message }
 	}
 }
-
-Object.assign(module.exports, {
-	init
-})
