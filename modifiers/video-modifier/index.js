@@ -1,9 +1,10 @@
-import YTDlpWrap from 'yt-dlp-wrap';
-import path from 'node:path';
-import fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import ffmpeg from 'fluent-ffmpeg';
-import ffmpegPath from 'ffmpeg-static';
+import YTDlpWrap from 'yt-dlp-wrap'
+import path from 'node:path'
+import fs from 'node:fs'
+import { promises as fsPromises } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import ffmpeg from 'fluent-ffmpeg'
+import ffmpegPath from 'ffmpeg-static'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,7 +43,7 @@ const makeDownloadVersion = () => async () => {
 
 const makeCreateDownloadDir = () => async () => {
 	try {
-		fs.mkdirSync(DOWNLOAD_DIR, { recursive: true })
+		await fsPromises.mkdir(DOWNLOAD_DIR, { recursive: true })
 	} catch (err) {
 		console.error('[ERROR] Could not create download directory:', err.message)
 		throw err
@@ -91,35 +92,26 @@ const makeDownloadAndClipVideo = (clipVideo) => async ({ url, start, end }) => {
 	const ytDlpWrap = new YTDlpWrap.default(YT_DOWNLOAD_PATH)
 
 	let videoUrl = url.replace('https://', 'http://')
-
 	videoUrl = videoUrl.replace('twitter.com', 'x.com')
 
-	// global safety nets
-	process.on('uncaughtException', err => {
-		console.error('[FATAL] Uncaught Exception:', err)
-		process.exit(1)
-	})
-	process.on('unhandledRejection', (reason, p) => {
-		console.error('[FATAL] Unhandled Rejection:', reason, 'promise:', p)
-		process.exit(1)
-	})
-
 	const filenameKey = createRandomKey(10)
-
 	let fileName = `${filenameKey}.mp4`
 	const fileNameWithPath = `${DOWNLOAD_DIR}/${fileName}`
 
 	try {
 		await ytDlpWrap.execPromise(['--no-check-certificate', videoUrl, '-o', fileNameWithPath])
 
-		if (start || end) {
-			fileName = `clipped_${filenameKey}.mp4`
-			await clipVideo(fileNameWithPath, `${DOWNLOAD_DIR}/${fileName}`, start || 0, end)
+		if (start !== undefined || end !== undefined) {
+			const clippedFileName = `clipped_${filenameKey}.mp4`
+			const clippedFilePath = `${DOWNLOAD_DIR}/${clippedFileName}`
+			await clipVideo(fileNameWithPath, clippedFilePath, start || 0, end)
+
+			await fsPromises.unlink(fileNameWithPath).catch(() => {})
+			fileName = clippedFileName
 		}
 	} catch (startErr) {
-		console.error('[ERROR] Failed to start yt-dlp process:', startErr.message)
-
-		return { isSuccess: false }
+		console.error('[ERROR] Failed to process video:', startErr.message)
+		return { isSuccess: false, message: startErr.message }
 	}
 
 	return {
@@ -132,11 +124,7 @@ const makeGetVideoFile = () => async ({ fileName }) => {
 	try {
 		const filePath = path.join(DOWNLOAD_DIR, fileName)
 
-		if (!fs.existsSync(filePath)) {
-			return { isSuccess: false, message: 'File not found' }
-		}
-
-		const stats = fs.statSync(filePath)
+		const stats = await fsPromises.stat(filePath)
 
 		return {
 			isSuccess: true,
@@ -148,8 +136,11 @@ const makeGetVideoFile = () => async ({ fileName }) => {
 			}
 		}
 	} catch (error) {
-		console.error('[ERROR] Failed to get video file:', error.message)
+		if (error.code === 'ENOENT') {
+			return { isSuccess: false, message: 'File not found' }
+		}
 
+		console.error('[ERROR] Failed to get video file:', error.message)
 		return { isSuccess: false, message: error.message }
 	}
 }

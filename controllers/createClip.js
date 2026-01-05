@@ -1,19 +1,29 @@
-export const createClip = (context) => async (req, res) => {
-	const { video_url: videoUrl, start, end } = req.body || {}
+export const createClip = (context) => async (req, res, next) => {
+	try {
+		const { video_url: videoUrl, start, end } = req.body
 
-	if (!videoUrl) {
-		return res.status(400).json({ message: 'Video url is required' })
-	}
+		const processOptions = {
+			url: videoUrl,
+			...(start !== null && start !== undefined && { start }),
+			...(end !== null && end !== undefined && { end })
+		}
 
-	const { isSuccess, fileName } = await context.modifiers.videoModifier.downloadAndClipVideo({ url: videoUrl, start, end })
+		const { isSuccess, fileName, message } = await context.modifiers.videoModifier.downloadAndClipVideo(
+			processOptions
+		)
 
-	if (!isSuccess) {
-		return res.status(400).json({
-			message: 'Error downloading video'
+		if (!isSuccess) {
+			return res.status(400).json({
+				success: false,
+				message: message || 'Error downloading and clipping video'
+			})
+		}
+
+		return res.status(200).json({
+			success: true,
+			file_name: fileName
 		})
+	} catch (error) {
+		next(error)
 	}
-
-	return res.status(200).json({
-		file_name: fileName
-	})
 }
