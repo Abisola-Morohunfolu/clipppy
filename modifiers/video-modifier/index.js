@@ -25,7 +25,8 @@ export const init = () => {
 		downloadVersion,
 		createDownloadDir,
 		downloadAndClipVideo,
-		getVideoFile
+		getVideoFile,
+		downloadDir: DOWNLOAD_DIR
 	}
 }
 

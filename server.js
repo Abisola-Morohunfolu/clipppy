@@ -4,6 +4,7 @@ import http from 'node:http'
 import { init } from './modifiers/video-modifier/index.js'
 import { setupAppRouter } from './routes/index.js'
 import { corsMiddleware, globalRateLimiter, errorHandler } from './middleware/index.js'
+import { createCleanupService } from './services/cleanupService.js'
 
 process.on('uncaughtException', (err) => {
 	console.error('[FATAL] Uncaught Exception:', err)
@@ -21,6 +22,9 @@ export const start = async ({ port }) => {
 
 	const videoModifier = init()
 	await videoModifier.createDownloadDir()
+
+	const cleanupService = createCleanupService(videoModifier.downloadDir)
+	cleanupService.startScheduler()
 
 	const context = {
 		modifiers: {
