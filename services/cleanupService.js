@@ -44,12 +44,12 @@ export const createCleanupService = (downloadDir) => {
 
 		cron.schedule('*/5 * * * *', () => {
 			console.log('[CLEANUP] Running scheduled cleanup task')
-			cleanupOldFiles()
+			void cleanupOldFiles()
 		})
 
 		setImmediate(() => {
 			console.log('[CLEANUP] Running initial cleanup')
-			cleanupOldFiles()
+			void cleanupOldFiles()
 		})
 	}
 
