@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename)
 
 const YT_DOWNLOAD_PATH = path.join(__dirname, 'bin', 'yt-dlp')
 const DOWNLOAD_DIR = path.resolve(__dirname, 'downloads')
+const YTDlpWrapClass = YTDlpWrap.default || YTDlpWrap
 
 export const init = () => {
 	ffmpeg.setFfmpegPath(ffmpegPath)
@@ -31,7 +32,7 @@ export const init = () => {
 
 const makeDownloadVersion = () => async () => {
 	try {
-		await YTDlpWrap.downloadFromGithub(
+		await YTDlpWrapClass.downloadFromGithub(
 			YT_DOWNLOAD_PATH,
 			'2025.06.30'
 		)
@@ -89,7 +90,6 @@ const createRandomKey = (keyLength) => {
 }
 
 const makeDownloadAndClipVideo = (clipVideo) => async ({ url, start, end }) => {
-	const YTDlpWrapClass = YTDlpWrap.default || YTDlpWrap
 	const ytDlpWrap = new YTDlpWrapClass(YT_DOWNLOAD_PATH)
 
 	let videoUrl = url.replace('https://', 'http://')
