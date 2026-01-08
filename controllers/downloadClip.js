@@ -22,6 +22,7 @@ export const downloadClip = (context) => async (req, res, next) => {
 
 		fileStream.on('error', (error) => {
 			console.error('[ERROR] File stream error:', error.message)
+
 			if (!res.headersSent) {
 				next(error)
 			}

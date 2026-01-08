@@ -1,16 +1,15 @@
 import YTDlpWrap from 'yt-dlp-wrap'
 import path from 'node:path'
-import fs from 'node:fs'
-import { promises as fsPromises } from 'node:fs'
+import fs, { promises as fsPromises } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import ffmpeg from 'fluent-ffmpeg'
 import ffmpegPath from 'ffmpeg-static'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
-const YT_DOWNLOAD_PATH = path.join(__dirname, 'bin', 'yt-dlp');
-const DOWNLOAD_DIR = path.resolve(__dirname, 'downloads');
+const YT_DOWNLOAD_PATH = path.join(__dirname, 'bin', 'yt-dlp')
+const DOWNLOAD_DIR = path.resolve(__dirname, 'downloads')
 
 export const init = () => {
 	ffmpeg.setFfmpegPath(ffmpegPath)
@@ -93,6 +92,7 @@ const makeDownloadAndClipVideo = (clipVideo) => async ({ url, start, end }) => {
 	const ytDlpWrap = new YTDlpWrap.default(YT_DOWNLOAD_PATH)
 
 	let videoUrl = url.replace('https://', 'http://')
+
 	videoUrl = videoUrl.replace('twitter.com', 'x.com')
 
 	const filenameKey = createRandomKey(10)
@@ -105,6 +105,7 @@ const makeDownloadAndClipVideo = (clipVideo) => async ({ url, start, end }) => {
 		if (start !== undefined || end !== undefined) {
 			const clippedFileName = `clipped_${filenameKey}.mp4`
 			const clippedFilePath = `${DOWNLOAD_DIR}/${clippedFileName}`
+
 			await clipVideo(fileNameWithPath, clippedFilePath, start || 0, end)
 
 			await fsPromises.unlink(fileNameWithPath).catch(() => {})
@@ -112,6 +113,7 @@ const makeDownloadAndClipVideo = (clipVideo) => async ({ url, start, end }) => {
 		}
 	} catch (startErr) {
 		console.error('[ERROR] Failed to process video:', startErr.message)
+
 		return { isSuccess: false, message: startErr.message }
 	}
 
@@ -142,6 +144,7 @@ const makeGetVideoFile = () => async ({ fileName }) => {
 		}
 
 		console.error('[ERROR] Failed to get video file:', error.message)
+
 		return { isSuccess: false, message: error.message }
 	}
 }

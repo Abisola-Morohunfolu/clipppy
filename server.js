@@ -21,9 +21,11 @@ export const start = async ({ port }) => {
 	const router = express.Router()
 
 	const videoModifier = init()
+
 	await videoModifier.createDownloadDir()
 
 	const cleanupService = createCleanupService(videoModifier.downloadDir)
+
 	cleanupService.startScheduler()
 
 	const context = {
