@@ -1,6 +1,6 @@
 import YTDlpWrap from 'yt-dlp-wrap'
 import path from 'node:path'
-import fs, { promises as fsPromises } from 'node:fs'
+import { promises as fsPromises } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import ffmpeg from 'fluent-ffmpeg'
 import ffmpegPath from 'ffmpeg-static'
@@ -89,7 +89,8 @@ const createRandomKey = (keyLength) => {
 }
 
 const makeDownloadAndClipVideo = (clipVideo) => async ({ url, start, end }) => {
-	const ytDlpWrap = new YTDlpWrap.default(YT_DOWNLOAD_PATH)
+	const YTDlpWrapClass = YTDlpWrap.default || YTDlpWrap
+	const ytDlpWrap = new YTDlpWrapClass(YT_DOWNLOAD_PATH)
 
 	let videoUrl = url.replace('https://', 'http://')
 

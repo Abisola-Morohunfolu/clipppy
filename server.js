@@ -20,8 +20,12 @@ export const start = async ({ port }) => {
 	const app = express()
 	const router = express.Router()
 
+	// Trust proxy to correctly identify client IPs behind reverse proxies
+	app.set('trust proxy', true)
+
 	const videoModifier = init()
 
+	await videoModifier.downloadVersion()
 	await videoModifier.createDownloadDir()
 
 	const cleanupService = createCleanupService(videoModifier.downloadDir)
