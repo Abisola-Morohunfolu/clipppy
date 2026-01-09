@@ -31,11 +31,11 @@ export const init = () => {
 	}
 }
 
-const createBinDir = () => async () => {
+const createBinDir = async () => {
 	try {
 		await fsPromises.mkdir(BIN_DIR, { recursive: true })
 	} catch (err) {
-		console.error('[ERROR] Could not create download directory:', err.message)
+		console.error('[ERROR] Could not create bin directory:', err.message)
 		throw err
 	}
 }
