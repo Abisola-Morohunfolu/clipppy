@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename)
 
 const YT_DOWNLOAD_PATH = path.join(__dirname, 'bin', 'yt-dlp')
 const DOWNLOAD_DIR = path.resolve(__dirname, 'downloads')
+const BIN_DIR = path.resolve(__dirname, 'bin')
 const YTDlpWrapClass = YTDlpWrap.default || YTDlpWrap
 
 export const init = () => {
@@ -30,8 +31,18 @@ export const init = () => {
 	}
 }
 
+const createBinDir = () => async () => {
+	try {
+		await fsPromises.mkdir(BIN_DIR, { recursive: true })
+	} catch (err) {
+		console.error('[ERROR] Could not create download directory:', err.message)
+		throw err
+	}
+}
+
 const makeDownloadVersion = () => async () => {
 	try {
+		await createBinDir()
 		await YTDlpWrapClass.downloadFromGithub(
 			YT_DOWNLOAD_PATH,
 			'2025.06.30'
