@@ -1,0 +1,42 @@
+# Use Node.js LTS with Alpine for smaller image size
+FROM node:20-alpine
+
+# Install Python 3 and required system dependencies
+# python3: Required for yt-dlp
+# py3-pip: Python package manager
+# ffmpeg: Required for video processing (fluent-ffmpeg)
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    ffmpeg
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files first for better layer caching
+COPY package*.json ./
+
+# Install Node.js dependencies
+# --omit=dev excludes devDependencies in production
+ENV NODE_ENV=production
+RUN npm ci --omit=dev
+
+# Copy application source code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p modifiers/video-modifier/bin \
+    && mkdir -p modifiers/video-modifier/downloads
+
+# Expose the port (default 8000, can be overridden via PORT env var)
+EXPOSE 8000
+
+# Run as non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 && \
+    chown -R nodejs:nodejs /app
+
+USER nodejs
+
+# Start the application
+CMD ["node", "index.js"]

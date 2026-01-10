@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: clippy-dev
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=development
+      - PORT=8000
+    volumes:
+      # Mount source code for live reloading
+      - .:/app
+      # Preserve node_modules in container
+      - /app/node_modules
+      # Persist downloads and binaries on host
+      - ./modifiers/video-modifier/downloads:/app/modifiers/video-modifier/downloads
+      - ./modifiers/video-modifier/bin:/app/modifiers/video-modifier/bin
+    restart: unless-stopped
+    command: npx nodemon index.js

@@ -1,0 +1,51 @@
+# Node modules - will be installed in container
+node_modules
+npm-debug.log
+
+# Git files
+.git
+.gitignore
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Development files
+.eslintrc.js
+eslint.config.js
+.prettierrc
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+test
+tests
+**/*.test.js
+coverage
+
+# Documentation
+README.md
+*.md
+!package*.json
+
+# Build artifacts
+dist
+build
+
+# Logs
+logs
+*.log
+
+# Downloaded files (will be created in container)
+modifiers/video-modifier/downloads/*
+modifiers/video-modifier/bin/*
